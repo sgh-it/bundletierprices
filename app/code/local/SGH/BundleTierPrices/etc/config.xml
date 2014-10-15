@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <SGH_BundleTierPrices>
+             <version>0.1.0</version>
+        </SGH_BundleTierPrices>
+    </modules>
+    <admin>
+    </admin>
+    <global>
+        <events>
+            <checkout_cart_save_before>
+                <observers>
+                    <bundletierprices>
+                        <type>singleton</type>
+                        <class>sgh_bundletierprices/observer</class>
+                        <method>updateSelectionQtys</method>
+                    </bundletierprices>
+                </observers>
+            </checkout_cart_save_before>
+        </events>
+        <models>
+            <sgh_bundletierprices>
+                <class>SGH_BundleTierPrices_Model</class>
+            </sgh_bundletierprices>
+            <bundle>
+                <rewrite>
+                    <product_price>SGH_BundleTierPrices_Model_Product_Price</product_price>
+                </rewrite>
+            </bundle>
+        </models>
+    </global>
+</config>

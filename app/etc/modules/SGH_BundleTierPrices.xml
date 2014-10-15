@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <SGH_BundleTierPrices>
+             <active>true</active>
+             <codePool>local</codePool>
+        </SGH_BundleTierPrices>
+    </modules>
+</config>

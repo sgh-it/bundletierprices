@@ -1,0 +1,16 @@
+{
+    "name": "sgh/bundletierprices",
+    "license": "osl-3.0",
+    "type": "magento-module",
+    "description": "Allow tier prices within bundle product options",
+    "homepage": "http://www.sgh-it.eu/",
+    "require": {
+        "magento-hackathon/magento-composer-installer": "*"
+    },
+    "authors":[
+        {
+            "name":"Fabian Schmengler",
+            "email":"fschmengler@sgh-it.eu"
+        }
+    ]
+}
