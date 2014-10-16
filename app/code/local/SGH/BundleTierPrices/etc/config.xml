@@ -25,9 +25,14 @@
             </sgh_bundletierprices>
             <bundle>
                 <rewrite>
-                    <product_price>SGH_BundleTierPrices_Model_Product_Price</product_price>
+                    <product_price>SGH_BundleTierPrices_Model_Bundle_Product_Price</product_price>
                 </rewrite>
             </bundle>
+            <catalog>
+                <rewrite>
+                    <product_type_price>SGH_BundleTierPrices_Model_Product_Price</product_type_price>
+                </rewrite>
+            </catalog>
         </models>
     </global>
 </config>

@@ -1,6 +1,6 @@
 <?php
 /**
- * Rewrite bundle price model to calculate tier prices correctly in bundle options
+ * Rewrite default price model to fix a Magento bug with tier prices in bundle product options
  *
  * @category   SGH
  * @package    SGH_BundleTierPrices
@@ -9,59 +9,21 @@
  * @copyright  SGH informationstechnologie UGmbh 2014
  *
  */
-class SGH_BundleTierPrices_Model_Product_Price extends Mage_Bundle_Model_Product_Price
+class SGH_BundleTierPrices_Model_Product_Price extends Mage_Catalog_Model_Product_Type_Price
 {
-	/**
-	 * Calculate final price of selection
-	 * with take into account tier price
-	 *
-	 * @param  Mage_Catalog_Model_Product $bundleProduct
-	 * @param  Mage_Catalog_Model_Product $selectionProduct
-	 * @param  decimal                    $bundleQty
-	 * @param  decimal                    $selectionQty
-	 * @param  bool                       $multiplyQty
-	 * @param  bool                       $takeTierPrice
-	 * @return decimal
-	 */
-	public function getSelectionFinalTotalPrice($bundleProduct, $selectionProduct, $bundleQty, $selectionQty,
-			$multiplyQty = true, $takeTierPrice = true)
-	{
-		if (is_null($selectionQty)) {
-			$selectionQty = $selectionProduct->getSelectionQty();
-		}
-
-		//BEGIN hack: force recalculation
-		if ($takeTierPrice) {
-		    $selectionProduct->setFinalPrice(null);
-		}
-		// END hack
-
-		if ($bundleProduct->getPriceType() == self::PRICE_TYPE_DYNAMIC) {
-			$price = $selectionProduct->getFinalPrice($takeTierPrice ? $selectionQty * max(1, $bundleQty) : 1);
-			//                                                                        ^^^^^^^^^^^^^^^^^^^ hack: take bundle qty into account if possible
-		} else {
-			if ($selectionProduct->getSelectionPriceType()) { // percent
-				$product = clone $bundleProduct;
-				$product->setFinalPrice($this->getPrice($product));
-				Mage::dispatchEvent(
-				'catalog_product_get_final_price',
-				array('product' => $product, 'qty' => $bundleQty)
-				);
-				$price = $product->getData('final_price') * ($selectionProduct->getSelectionPriceValue() / 100);
-
-			} else { // fixed
-				$price = $selectionProduct->getSelectionPriceValue();
-			}
-		}
-
-		if ($multiplyQty) {
-			$price *= $selectionQty;
-		}
-
-		return min($price,
-				$this->_applyGroupPrice($bundleProduct, $price),
-				$this->_applyTierPrice($bundleProduct, $bundleQty, $price),
-				$this->_applySpecialPrice($bundleProduct, $price)
-		);
-	}
+    /**
+     * Always use numeric keys, otherwise JSON configuration gets screwed up
+     * (expects array, would get object) and the configured price does not calculate correctly
+     *
+     * (non-PHPdoc)
+     * @see Mage_Bundle_Model_Product_Price::getTierPrice($qty, $product)
+     */
+    public function getTierPrice($qty = null, $product)
+    {
+        $tierPrice = parent::getTierPrice($qty, $product);
+        if (is_array($tierPrice)) {
+            return array_values($tierPrice);
+        }
+        return $tierPrice;
+    }
 }
